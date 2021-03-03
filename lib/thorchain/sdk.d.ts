@@ -9,7 +9,7 @@ export interface IThorchainSDK {
     validatePhrase(phrase: string): boolean;
     setPhrase(phrase: string): void;
     loadWallet(): Promise<Wallet | null>;
-    refresh(): void;
+    refresh(): Promise<void>;
 }
 export declare class ThorchainSDK implements IThorchainSDK {
     multichain: MultiChain;
@@ -21,7 +21,7 @@ export declare class ThorchainSDK implements IThorchainSDK {
     validatePhrase: (phrase: string) => boolean;
     setPhrase: (phrase: string) => void;
     loadWallet: () => Promise<Wallet | null>;
-    refresh: () => void;
+    refresh: () => Promise<void>;
     private fetchPools;
     quote: (inputAsset: string, outputAsset: string, amount: number) => Swap;
     swap: (swapEntity: Swap) => Promise<string>;
