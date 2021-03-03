@@ -8,7 +8,7 @@ export interface IThorchainSDK {
   multichain: MultiChain
   pools: Pool[]
 
-  quote(inputAsset: string, outputAsset: string, amount: number): Promise<Swap>
+  quote(inputAsset: string, outputAsset: string, amount: number): Swap
   swap(swapEntity: Swap): Promise<string>
   validatePhrase(phrase: string): boolean
   setPhrase(phrase: string): void
@@ -65,23 +65,22 @@ export class ThorchainSDK implements IThorchainSDK {
     }
   }
 
-  quote = async (
-    inputAsset: string,
-    outputAsset: string,
-    amount: number,
-  ): Promise<Swap> => {
+  quote = (inputAsset: string, outputAsset: string, amount: number): Swap => {
     const input = Asset.fromAssetString(inputAsset)
     const output = Asset.fromAssetString(outputAsset)
 
-    if (!input || !output || !this.pools.length) {
+    if (!input || !output) {
       throw Error('invalid asset')
+    }
+
+    if (!this.pools.length) {
+      throw Error('invalid pool data')
     }
 
     const amountEntity = Amount.fromAssetAmount(amount, input.decimal)
     const inputAssetAmount = new AssetAmount(input, amountEntity)
 
     try {
-      await this.fetchPools()
       const swapEntity = new Swap(input, output, this.pools, inputAssetAmount)
 
       return swapEntity

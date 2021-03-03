@@ -4,7 +4,7 @@ import { Swap, Pool } from '../entities';
 export interface IThorchainSDK {
     multichain: MultiChain;
     pools: Pool[];
-    quote(inputAsset: string, outputAsset: string, amount: number): Promise<Swap>;
+    quote(inputAsset: string, outputAsset: string, amount: number): Swap;
     swap(swapEntity: Swap): Promise<string>;
     validatePhrase(phrase: string): boolean;
     setPhrase(phrase: string): void;
@@ -23,6 +23,6 @@ export declare class ThorchainSDK implements IThorchainSDK {
     loadWallet: () => Promise<Wallet | null>;
     refresh: () => void;
     private fetchPools;
-    quote: (inputAsset: string, outputAsset: string, amount: number) => Promise<Swap>;
+    quote: (inputAsset: string, outputAsset: string, amount: number) => Swap;
     swap: (swapEntity: Swap) => Promise<string>;
 }
