@@ -5,6 +5,9 @@ import { MultiChain } from '../clients'
 import { Asset, Amount, AssetAmount, Swap, Pool } from '../entities'
 
 export interface IThorchainSDK {
+  multichain: MultiChain
+  pools: Pool[]
+
   getFetchInterval(): number
   setFetchInterval(sec: number): void
   quote(inputAsset: string, outputAsset: string, amount: number): Swap
@@ -13,9 +16,9 @@ export interface IThorchainSDK {
 }
 
 export class ThorchainSDK implements IThorchainSDK {
-  private multichain: MultiChain
+  public multichain: MultiChain
 
-  private pools: Pool[] = []
+  public pools: Pool[] = []
 
   private fetchInterval = 60 * 1000 // default 1 Min
 
