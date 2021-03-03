@@ -1,10 +1,9 @@
 {
-  "name": "bepswap-sdk",
+  "name": "multichain-sdk",
   "version": "1.0.0",
-  "description": "Javascript SDK for Thorchain BEPSwap",
+  "description": "Javascript SDK for Thorchain",
   "keywords": [
     "THORChain",
-    "BEPSwap",
     "SDK",
     "Typescript"
   ],
