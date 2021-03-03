@@ -13,6 +13,7 @@ export interface IThorchainSDK {
   quote(inputAsset: string, outputAsset: string, amount: number): Swap
   swap(swapEntity: Swap): Promise<string>
   validatePhrase(phrase: string): boolean
+  setPhrase(phrase: string): void
 }
 
 export class ThorchainSDK implements IThorchainSDK {
@@ -37,6 +38,10 @@ export class ThorchainSDK implements IThorchainSDK {
 
   validatePhrase = (phrase: string): boolean => {
     return validatePhrase(phrase)
+  }
+
+  setPhrase = (phrase: string): void => {
+    this.multichain.setPhrase(phrase)
   }
 
   getFetchInterval = () => {
