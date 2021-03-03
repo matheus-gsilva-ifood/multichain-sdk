@@ -42,6 +42,14 @@ export type WithdrawParams = {
   percent: Percent
 }
 
+export enum SupportedChainsEnum {
+  'Thor' = 'thor',
+  'Bnb' = 'bnb',
+  'Btc' = 'btc',
+  'Eth' = 'eth',
+  'Ltc' = 'ltc' 
+}
+
 // note only supported chains
 export const supportedChains = [
   BTCChain,

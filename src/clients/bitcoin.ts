@@ -6,11 +6,7 @@ import { AmountType, Amount, Asset, AssetAmount } from '../entities'
 import { IClient } from './client'
 import { TxParams } from './types'
 
-export interface IBtcChain extends IClient {
-  getClient(): BtcClient
-}
-
-export class BtcChain implements IBtcChain {
+export class BtcChain implements IClient<BtcClient> {
   private balances: AssetAmount[] = []
 
   private client: BtcClient

@@ -6,11 +6,7 @@ import { AmountType, Amount, Asset, AssetAmount } from '../entities'
 import { IClient } from './client'
 import { TxParams } from './types'
 
-export interface ILtcChain extends IClient {
-  getClient(): LtcClient
-}
-
-export class LtcChain implements ILtcChain {
+export class LtcChain implements IClient<LtcClient> {
   private balances: AssetAmount[] = []
 
   private client: LtcClient

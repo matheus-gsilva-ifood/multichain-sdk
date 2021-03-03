@@ -15,6 +15,7 @@ import {
   THORChain,
   ETHChain,
   LTCChain,
+  chains
   // BCHChain,
 } from '@xchainjs/xchain-util'
 import {
@@ -26,6 +27,7 @@ import {
 import { Swap, Memo, Asset, AssetAmount } from '../entities'
 import { BnbChain } from './binance'
 import { BtcChain } from './bitcoin'
+import { IClient } from './client'
 // import { BchChain } from './bitcoinCash'
 import { EthChain } from './ethereum'
 import { LtcChain } from './litecoin'
@@ -39,6 +41,7 @@ import {
   supportedChains,
   SupportedChain,
   AddLiquidityTxns,
+  SupportedChainsEnum,
 } from './types'
 
 // specifying non-eth client is needed for getFees method
@@ -53,13 +56,6 @@ export interface IMultiChain {
   network: string
 
   wallets: Wallet | null
-
-  thor: ThorChain
-  btc: BtcChain
-  bnb: BnbChain
-  eth: EthChain
-  ltc: LtcChain
-  // bch: BchChain
 
   getPhrase(): string
   setPhrase(phrase: string): void
@@ -101,17 +97,7 @@ export class MultiChain implements IMultiChain {
 
   public readonly network: Network
 
-  public thor: ThorChain
-
-  public btc: BtcChain
-
-  public bnb: BnbChain
-
-  public eth: EthChain
-
-  // public bch: BchChain
-
-  public ltc: LtcChain
+  public clients: Record<SupportedChainsEnum, IClient<any>>;
 
   constructor({
     network = 'testnet',
@@ -127,16 +113,21 @@ export class MultiChain implements IMultiChain {
     this.midgard = new MidgardV2(MultiChain.getMidgardNetwork(network))
 
     // create chain clients
-    this.thor = new ThorChain({ network, phrase })
-    this.bnb = new BnbChain({ network, phrase })
-    this.btc = new BtcChain({ network, phrase })
-    this.eth = new EthChain({ network, phrase })
-    this.ltc = new LtcChain({ network, phrase })
+    this.clients = {
+      [SupportedChainsEnum.Thor]: new ThorChain({ network, phrase }),
+      [SupportedChainsEnum.Bnb]: new BnbChain({ network, phrase }),
+      [SupportedChainsEnum.Btc]: new BtcChain({ network, phrase }),
+      [SupportedChainsEnum.Eth]: new EthChain({ network, phrase }),
+      [SupportedChainsEnum.Ltc]: new LtcChain({ network, phrase })
+    }
     // this.bch = new BchChain({ network, phrase })
   }
 
   setPhrase = (phrase: string) => {
     this.phrase = phrase
+    Object.keys(this.clients).forEach((chain) => {
+      this.clients[chain].getClient().setPhrase(phrase);
+    })
 
     this.thor.getClient().setPhrase(phrase)
     this.bnb.getClient().setPhrase(phrase)
@@ -223,13 +214,10 @@ export class MultiChain implements IMultiChain {
   }
 
   getChainClient = (chain: Chain) => {
-    if (chain === THORChain) return this.thor
-    if (chain === BNBChain) return this.bnb
-    if (chain === BTCChain) return this.btc
-    if (chain === ETHChain) return this.eth
-    if (chain === LTCChain) return this.ltc
-    // if (chain === BCHChain) return this.bch
-
+    const chainSelected = chain.toLowerCase() as keyof this
+    if(chains.includes(chain)) {
+      return this[chainSelected]
+    }
     return null
   }
 

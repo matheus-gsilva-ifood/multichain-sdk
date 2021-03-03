@@ -3,20 +3,10 @@ import { Client as ThorClient } from '@xchainjs/xchain-thorchain'
 import { baseAmount, Chain, THORChain } from '@xchainjs/xchain-util'
 
 import { AmountType, Amount, Asset, AssetAmount } from '../entities'
-import { IClient } from './client'
+import { DepositParam, IClient } from './client'
 import { TxParams } from './types'
 
-export type DepositParam = {
-  assetAmount: AssetAmount
-  memo?: string
-}
-
-export interface IThorChain extends IClient {
-  getClient(): ThorClient
-  deposit(tx: DepositParam): Promise<TxHash>
-}
-
-export class ThorChain implements IThorChain {
+export class ThorChain implements IClient<ThorClient> {
   private balances: AssetAmount[] = []
 
   private client: ThorClient

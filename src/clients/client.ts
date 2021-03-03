@@ -4,7 +4,12 @@ import { Chain } from '@xchainjs/xchain-util'
 import { Asset, AssetAmount } from '../entities'
 import { TxParams } from './types'
 
-export interface IClient {
+export type DepositParam = {
+  assetAmount: AssetAmount
+  memo?: string
+}
+
+export interface IClient<T> {
   chain: Chain
   balance: AssetAmount[]
 
@@ -13,4 +18,7 @@ export interface IClient {
   getAssetBalance(asset: Asset): Promise<AssetAmount>
 
   transfer(tx: TxParams): Promise<TxHash>
+
+  getClient(): T
+  deposit?: (tx: DepositParam) => Promise<TxHash>
 }

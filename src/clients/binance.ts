@@ -10,12 +10,7 @@ import { AmountType, Amount, Asset, AssetAmount } from '../entities'
 import { IClient } from './client'
 import { TxParams, MultiSendParams } from './types'
 
-export interface IBnbChain extends IClient {
-  getClient(): BncClient
-  multiSend(params: MultiSendParams): Promise<TxHash>
-}
-
-export class BnbChain implements IBnbChain {
+export class BnbChain implements IClient<BncClient> {
   private balances: AssetAmount[] = []
 
   private client: BncClient
