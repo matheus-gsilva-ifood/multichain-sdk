@@ -1,29 +1,24 @@
 import { Network } from '@xchainjs/xchain-client'
 import { validatePhrase } from '@xchainjs/xchain-crypto'
 
-import { MultiChain } from '../clients'
+import { MultiChain, Wallet } from '../clients'
 import { Asset, Amount, AssetAmount, Swap, Pool } from '../entities'
 
 export interface IThorchainSDK {
   multichain: MultiChain
   pools: Pool[]
 
-  getFetchInterval(): number
-  setFetchInterval(sec: number): void
-  quote(inputAsset: string, outputAsset: string, amount: number): Swap
+  quote(inputAsset: string, outputAsset: string, amount: number): Promise<Swap>
   swap(swapEntity: Swap): Promise<string>
   validatePhrase(phrase: string): boolean
   setPhrase(phrase: string): void
+  loadWallet(): Promise<Wallet | null>
 }
 
 export class ThorchainSDK implements IThorchainSDK {
   public multichain: MultiChain
 
   public pools: Pool[] = []
-
-  private fetchInterval = 60 * 1000 // default 1 Min
-
-  private timer: NodeJS.Timeout | null = null
 
   constructor({
     network = 'testnet',
@@ -33,7 +28,6 @@ export class ThorchainSDK implements IThorchainSDK {
     phrase?: string
   }) {
     this.multichain = new MultiChain({ network, phrase })
-    this.startFetchInterval()
   }
 
   validatePhrase = (phrase: string): boolean => {
@@ -44,22 +38,8 @@ export class ThorchainSDK implements IThorchainSDK {
     this.multichain.setPhrase(phrase)
   }
 
-  getFetchInterval = () => {
-    return this.fetchInterval
-  }
-
-  setFetchInterval = (sec: number) => {
-    this.fetchInterval = sec * 1000
-
-    if (this.timer) {
-      clearInterval(this.timer)
-    }
-
-    this.startFetchInterval()
-  }
-
-  private startFetchInterval = () => {
-    this.timer = setInterval(this.fetchPools, this.fetchInterval)
+  loadWallet = async (): Promise<Wallet | null> => {
+    return await this.multichain.loadAllWallets()
   }
 
   private fetchPools = async () => {
@@ -80,11 +60,15 @@ export class ThorchainSDK implements IThorchainSDK {
     }
   }
 
-  quote = (inputAsset: string, outputAsset: string, amount: number): Swap => {
+  quote = async (
+    inputAsset: string,
+    outputAsset: string,
+    amount: number,
+  ): Promise<Swap> => {
     const input = Asset.fromAssetString(inputAsset)
     const output = Asset.fromAssetString(outputAsset)
 
-    if (!input || !output) {
+    if (!input || !output || !this.pools.length) {
       throw Error('invalid asset')
     }
 
@@ -92,6 +76,7 @@ export class ThorchainSDK implements IThorchainSDK {
     const inputAssetAmount = new AssetAmount(input, amountEntity)
 
     try {
+      await this.fetchPools()
       const swapEntity = new Swap(input, output, this.pools, inputAssetAmount)
 
       return swapEntity
