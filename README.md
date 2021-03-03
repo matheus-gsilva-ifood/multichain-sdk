@@ -41,23 +41,16 @@ const thorchain = new ThorchainSDk({ network: 'testnet', phrase: 'xxxx' })
 const useThorchain = async () => {
   try {
     // quote swap
-    const {
-      outputAmount,
-      slip,
-      hasInSufficientFee,
-      estimatedNetworkFee,
-    } = await thorchain.quote('BTC.BTC', 'BNB.BNB', 100)
+    const swapEntity = thorchain.quote('BTC.BTC', 'BNB.BNB', 100)
 
-    console.log(outputAmount)
-    console.log(slip)
-    console.log(hasInSufficientFee)
-    console.log(estimatedNetworkFee)
+    console.log(swapEntity.outputAmount.assetAmount.toNumber())
+    console.log(swapEntity.slip.assetAmount.toNumber())
+    console.log(swapEntity.hasInSufficientFee)
+    console.log(swapEntity.estimatedNetworkFee.assetAmount.toNumber())
 
     // execute swap
+    const txExplorerUrl = await thorchain.swap(swapEntity)
 
-    const txExplorerUrl = await thorchain.swap('BTC.BTC', 'BNB.BNB', 100)
-
-    // get tx explorer url
     console.log(txExplorerUrl)
   } catch (error) {
     console.log(error)
@@ -65,6 +58,7 @@ const useThorchain = async () => {
 }
 
 useThorchain()
+
 
 ```
 
