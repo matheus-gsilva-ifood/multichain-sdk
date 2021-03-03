@@ -13,6 +13,7 @@ export interface IThorchainSDK {
   validatePhrase(phrase: string): boolean
   setPhrase(phrase: string): void
   loadWallet(): Promise<Wallet | null>
+  refresh(): void
 }
 
 export class ThorchainSDK implements IThorchainSDK {
@@ -40,6 +41,10 @@ export class ThorchainSDK implements IThorchainSDK {
 
   loadWallet = async (): Promise<Wallet | null> => {
     return await this.multichain.loadAllWallets()
+  }
+
+  refresh = () => {
+    this.fetchPools()
   }
 
   private fetchPools = async () => {
