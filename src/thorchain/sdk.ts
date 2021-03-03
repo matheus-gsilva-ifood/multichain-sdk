@@ -10,7 +10,7 @@ export interface IThorchainSDK {
   swap(swapEntity: Swap): Promise<string>
 }
 
-export class ThorchainSDk implements IThorchainSDK {
+export class ThorchainSDK implements IThorchainSDK {
   private multichain: MultiChain
 
   private pools: Pool[] = []

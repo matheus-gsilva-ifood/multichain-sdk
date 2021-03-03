@@ -1,6 +1,6 @@
-import { ThorchainSDk } from '../src'
+import { ThorchainSDK } from '../src'
 
-const thorchain = new ThorchainSDk({ network: 'testnet', phrase: 'xxxx' })
+const thorchain = new ThorchainSDK({ network: 'testnet', phrase: 'xxxx' })
 
 const useThorchain = async () => {
   try {
