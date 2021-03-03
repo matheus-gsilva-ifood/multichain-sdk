@@ -1,4 +1,5 @@
 import { Network } from '@xchainjs/xchain-client'
+import { validatePhrase } from '@xchainjs/xchain-crypto'
 
 import { MultiChain } from '../clients'
 import { Asset, Amount, AssetAmount, Swap, Pool } from '../entities'
@@ -8,6 +9,7 @@ export interface IThorchainSDK {
   setFetchInterval(sec: number): void
   quote(inputAsset: string, outputAsset: string, amount: number): Swap
   swap(swapEntity: Swap): Promise<string>
+  validatePhrase(phrase: string): boolean
 }
 
 export class ThorchainSDK implements IThorchainSDK {
@@ -28,6 +30,10 @@ export class ThorchainSDK implements IThorchainSDK {
   }) {
     this.multichain = new MultiChain({ network, phrase })
     this.startFetchInterval()
+  }
+
+  validatePhrase = (phrase: string): boolean => {
+    return validatePhrase(phrase)
   }
 
   getFetchInterval = () => {
