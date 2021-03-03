@@ -28,33 +28,44 @@ ETHERSCAN_API_KEY=xxx
 
 Please refer examples for the detailed usage
 
+### [SDK Example](./examples/sdk.ts)
 ### [Trade Examples](./examples)
 ### [Entities Examples](./examples/entities)
 
 ```
-import { MultiChain } from '@thorchain/multichain-sdk'
+import { ThorchainSDk } from 'thorchain-sdk'
 
-const client = new MultiChain({ network: 'mainnet', phrase: 'xxx xxx...' })
+const thorchain = new ThorchainSDk({ network: 'testnet', phrase: 'xxxx' })
+)
 
-// OR
+const useThorchain = async () => {
+  try {
+    // quote swap
+    const {
+      outputAmount,
+      slip,
+      hasInSufficientFee,
+      estimatedNetworkFee,
+    } = await thorchain.quote('BTC.BTC', 'BNB.BNB', 100)
 
-const client = new MultiChain({ network: 'mainnet' })
-client.setPhrase('somephrase')
+    console.log(outputAmount)
+    console.log(slip)
+    console.log(hasInSufficientFee)
+    console.log(estimatedNetworkFee)
 
-// transfer assets
-transfer(tx: TxParams): Promise<TxHash>;
+    // execute swap
 
-// multisend assets
-multiSend(params: MultiSendParams): Promise<TxHash>;
+    const txExplorerUrl = await thorchain.swap('BTC.BTC', 'BNB.BNB', 100)
 
-// swap assets
-swap(swap: Swap): Promise<TxHash>;
+    // get tx explorer url
+    console.log(txExplorerUrl)
+  } catch (error) {
+    console.log(error)
+  }
+}
 
-// add liquidity
-addLiquidity(params: AddLiquidityParams): Promise<TxHash>;
+useThorchain()
 
-// withdraw from liquidity
-withdraw(params: WithdrawParams): Promise<TxHash>;
 ```
 
 ### Entities
