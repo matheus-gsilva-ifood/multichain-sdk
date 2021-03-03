@@ -10,11 +10,7 @@ import { decryptFromKeystore, Keystore } from '@xchainjs/xchain-crypto'
 import {
   baseAmount,
   Chain,
-  BTCChain,
-  BNBChain,
   THORChain,
-  ETHChain,
-  LTCChain,
   chains
   // BCHChain,
 } from '@xchainjs/xchain-util'
@@ -125,16 +121,10 @@ export class MultiChain implements IMultiChain {
 
   setPhrase = (phrase: string) => {
     this.phrase = phrase
-    Object.keys(this.clients).forEach((chain) => {
-      this.clients[chain].getClient().setPhrase(phrase);
+    Object.keys(this.clients).forEach((chain: string) => {
+      const chainName = chain as unknown as SupportedChainsEnum
+      this.clients[chainName].getClient().setPhrase(phrase)
     })
-
-    this.thor.getClient().setPhrase(phrase)
-    this.bnb.getClient().setPhrase(phrase)
-    this.btc.getClient().setPhrase(phrase)
-    this.eth.getClient().setPhrase(phrase)
-    this.ltc.getClient().setPhrase(phrase)
-    // this.bch.getClient().setPhrase(phrase)
 
     this.initWallet()
   }
@@ -153,23 +143,23 @@ export class MultiChain implements IMultiChain {
   initWallet = () => {
     this.wallet = {
       THOR: {
-        address: this.thor.getClient().getAddress(),
+        address: this.clients[SupportedChainsEnum.Thor].getClient().getAddress(),
         balance: [],
       },
       BNB: {
-        address: this.bnb.getClient().getAddress(),
+        address: this.clients[SupportedChainsEnum.Bnb].getClient().getAddress(),
         balance: [],
       },
       BTC: {
-        address: this.btc.getClient().getAddress(),
+        address: this.clients[SupportedChainsEnum.Btc].getClient().getAddress(),
         balance: [],
       },
       ETH: {
-        address: this.eth.getClient().getAddress(),
+        address: this.clients[SupportedChainsEnum.Eth].getClient().getAddress(),
         balance: [],
       },
       LTC: {
-        address: this.ltc.getClient().getAddress(),
+        address: this.clients[SupportedChainsEnum.Ltc].getClient().getAddress(),
         balance: [],
       },
       // BCH: {
@@ -214,9 +204,9 @@ export class MultiChain implements IMultiChain {
   }
 
   getChainClient = (chain: Chain) => {
-    const chainSelected = chain.toLowerCase() as keyof this
+    const chainSelected = chain.toLowerCase() as SupportedChainsEnum
     if(chains.includes(chain)) {
-      return this[chainSelected]
+      return this.clients[chainSelected]
     }
     return null
   }
